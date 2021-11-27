@@ -1,0 +1,30 @@
+version: "3.9"
+services:
+  airflow:
+    build: ./airflow
+    volumes:
+      - ./dags:/opt/airflow/dags
+      - ./logs:/opt/airflow/logs
+      - ./plugins:/opt/airflow/plugins
+    ports:
+      - 8080:8080
+    command: bash -c "airflow webserver --port 8080 & airflow scheduler"
+
+  mysql:
+    #image: mysql/mysql-server:5.7
+    build: ./mysql
+    ports:
+      - 3306:3306
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:5.1
+    depends_on:
+      - mysql
+    restart: always
+    ports:
+      - '8088:80'
+    environment:
+      PMA_HOST: mysql
+      PMA_PORT: 3306
+
+    
